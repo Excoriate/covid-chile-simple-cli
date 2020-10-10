@@ -1,9 +1,13 @@
-package covid
+package meta
 
 import (
 	"fmt"
 	"github.com/urfave/cli"
 )
+
+func versionCommandImpl (){
+	fmt.Println("Current CLI version: 1.0")
+}
 
 func LoadsCommands() []cli.Command {
 	return  []cli.Command{
@@ -12,7 +16,7 @@ func LoadsCommands() []cli.Command {
 			Aliases: []string{"v"},
 			Usage:   "Check the version of the CLI",
 			Action: func(c *cli.Context) {
-				fmt.Println("something")
+				versionCommandImpl()
 			},
 		},
 	}

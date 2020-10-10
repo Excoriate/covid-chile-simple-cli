@@ -1,21 +1,29 @@
-package covid_chile_simple_cli
+package main
 
 import (
-	"github.com/urfave/cli/v2"
+	"cli/v2/cmd/meta"
+	"github.com/urfave/cli" // imports as package "cli"
 	"log"
 	"os"
 )
 
+var app = cli.NewApp()
+
+func cliInfo() {
+	app.Name = "covidcli"
+	app.Usage = "Simple CLI to fetch useful COVID information for Chilean people po weon!"
+	app.Version = "1.0.0"
+	app.Email = "alex@ideaup.cl"
+	app.Author = "IdeaUP.cl"
+}
+
+func loadMetaCommands(){
+	app.Commands = meta.LoadsCommands()
+}
+
 func main() {
-	app := &cli.App{
-		Name: "ideaupCLI",
-		Usage: "Use this CLI to do common operations like: create a new service based on a template, etc.",
-		Action: func(c *cli.Context) error {
-			fmt.Println("Chan chan! testing my CLI")
-			return nil
-		},
-	}
-	
+	cliInfo()
+	loadMetaCommands()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
