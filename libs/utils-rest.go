@@ -7,30 +7,37 @@ import (
 )
 
 type HTTPHeaders struct {
-	Key string
+	Key   string
 	Value string
 }
 
-type HttpRequestArguments struct {
-	Headers HTTPHeaders
-	uri string
-	method string
+type HTTPRequestArgs struct {
+	Headers []HTTPHeaders
+	Uri     string
+	Method  string
 }
 
 /**
 Make a HTTP GET request
- */
-func ExecHttpRequest(url string, method string) string {
+*/
+func ExecHttpRequest(args HTTPRequestArgs) string {
 	
-	req, _ := http.NewRequest(method, url, nil)
+	var method = ""
+	if args.Method == "" {
+		method = "GET"
+	} else {
+		method = args.Method
+	}
 	
-	// TODO: replace later as secrets
-	req.Header.Add("x-rapidapi-host", "chile-coronapi1.p.rapidapi.com")
-	req.Header.Add("x-rapidapi-key", "f255b0bc76msh76c5f8695aae921p10ccfbjsn2dc36c8dabde")
+	req, _ := http.NewRequest(method, args.Uri, nil)
+	
+	for index := 0; index < len(args.Headers); index++ {
+		 req.Header.Add(args.Headers[index].Key, args.Headers[index].Value)
+	}
 	
 	res, err := http.DefaultClient.Do(req)
 	
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	

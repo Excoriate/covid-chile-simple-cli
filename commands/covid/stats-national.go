@@ -21,16 +21,19 @@ import (
 	"time"
 )
 
+var API_URL_COVID_NATIONAL = "https://chile-coronapi1.p.rapidapi.com/v3/latest/nation"
+
 func statsCmdHandler(c *cli.Context) {
 	statsCmdImpl()
 }
 
 func helloCmdDoc() string {
 	return heredoc.Doc(`
-		covidcli hello
+		covidcli stats
 
 		EXAMPLES:
-		   covidcli -hello`)
+		    covidcli stats
+			covidcli stats -region santiago`)
 }
 
 func statsCmdImpl() {
@@ -38,8 +41,25 @@ func statsCmdImpl() {
 	s.Color("bgBlack", "bold", "fgRed")
 	s.Start()
 	
-	var url = "https://chile-coronapi1.p.rapidapi.com/v3/latest/nation"
-	response := libs.ExecHttpRequest(url, "GET")
+	// Building HTTP request arguments
+	var httpRequest  libs.HTTPRequestArgs
+	var httpHeaders []libs.HTTPHeaders
+	
+	var httpHeaderHost libs.HTTPHeaders
+	httpHeaderHost.Key = "x-rapidapi-host"
+	httpHeaderHost.Value = "chile-coronapi1.p.rapidapi.com"
+	
+	var httpHeaderKey libs.HTTPHeaders
+	httpHeaderKey.Key = "x-rapidapi-key"
+	httpHeaderKey.Value = "f255b0bc76msh76c5f8695aae921p10ccfbjsn2dc36c8dabde"
+	
+	httpHeaders = append(httpHeaders, httpHeaderHost)
+	httpHeaders = append(httpHeaders, httpHeaderKey)
+	
+	httpRequest.Uri = API_URL_COVID_NATIONAL
+	httpRequest.Headers = httpHeaders
+
+	response := libs.ExecHttpRequest(httpRequest)
 	var nationalCovidResultStruct NationalResult
 	err :=  json.Unmarshal([]byte(response), &nationalCovidResultStruct)
 	
@@ -50,34 +70,19 @@ func statsCmdImpl() {
 	
 	// TODO: split this logic in a separate function
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Category", "KPI"})
+	table.SetHeader([]string{"Day", "Confirmed Cases", "Mortality"})
 	
 	data := [][]string{
-		[]string{"Confirmed", strconv.Itoa(int(nationalCovidResultStruct.Confirmed))},
-		[]string{"Confirmed per 100 K", strconv.FormatFloat(nationalCovidResultStruct.ConfirmedPer100k, 'f', 6, 64)},
+		[]string{nationalCovidResultStruct.DayReported, strconv.Itoa(int(nationalCovidResultStruct.Confirmed)), strconv.Itoa(int(nationalCovidResultStruct.DeathsReportedTotal))},
+		[]string{nationalCovidResultStruct.DayReported, strconv.FormatFloat(nationalCovidResultStruct.ConfirmedPer100k, 'f', 6, 64) + " per 100K", strconv.FormatFloat(nationalCovidResultStruct.DeathsReportedPer100k, 'f', 6, 64)  + " per 100K"},
+		[]string{nationalCovidResultStruct.DayReported, strconv.FormatFloat(nationalCovidResultStruct.ConfirmedPerMillion, 'f', 6, 64)  + " per 1M", strconv.FormatFloat(nationalCovidResultStruct.DeathsReportedPerMillion, 'f', 6, 64)  + " per 1 M"},
 	}
 	
 	for _, v := range data {
 		table.Append(v)
 	}
 	table.Render()
-	
-	
-	// return nationalCovidResultStruct
 }
-
-/*
-func getCmdFlags() []cli.Flag {
-	return []cli.Flag{
-		&cli.StringFlag{
-			Name:  "test",
-			Usage: "Test flag",
-			Value: "",
-		},
-	}
-}
-
- */
 
 func GetCommands() []cli.Command {
 	return []cli.Command{
