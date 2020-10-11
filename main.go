@@ -10,7 +10,7 @@ import (
 
 var app = cli.NewApp()
 
-func cliInfo() {
+func loadCLIInformation() {
 	app.Name = "covidcli"
 	app.Usage = "Simple CLI to fetch useful COVID information for Chilean people po weon!"
 	app.Version = "1.0.0"
@@ -18,7 +18,14 @@ func cliInfo() {
 	app.Author = "IdeaUP.cl"
 }
 
-func loadCommands() []cli.Command {
+func loadCLI(){
+	loadCLIInformation()
+	loadCLICommands()
+	app.EnableBashCompletion = true
+	app.Commands = loadCLICommands()
+}
+
+func loadCLICommands() []cli.Command {
 	var commands []cli.Command
 	
 	commands = append(commands, meta.GetCommands()...)
@@ -27,8 +34,7 @@ func loadCommands() []cli.Command {
 }
 
 func main() {
-	cliInfo()
-	app.Commands = loadCommands()
+	loadCLI()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
