@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cli/v2/cmd/covid"
-	"cli/v2/cmd/meta"
+	"cli/v2/commands/covid"
+	"cli/v2/commands/meta"
 	"github.com/urfave/cli" // imports as package "cli"
 	"log"
 	"os"

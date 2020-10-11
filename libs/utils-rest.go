@@ -1,10 +1,21 @@
-package utils
+package libs
 
 import (
 	"io/ioutil"
 	"log"
 	"net/http"
 )
+
+type HTTPHeaders struct {
+	Key string
+	Value string
+}
+
+type HttpRequestArguments struct {
+	Headers HTTPHeaders
+	uri string
+	method string
+}
 
 /**
 Make a HTTP GET request

@@ -9,7 +9,7 @@ package covid
 */
 
 import (
-	"cli/v2/utils"
+	"cli/v2/libs"
 	"encoding/json"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/briandowns/spinner"
@@ -39,7 +39,7 @@ func statsCmdImpl() {
 	s.Start()
 	
 	var url = "https://chile-coronapi1.p.rapidapi.com/v3/latest/nation"
-	response := utils.ExecHttpRequest(url, "GET")
+	response := libs.ExecHttpRequest(url, "GET")
 	var nationalCovidResultStruct NationalResult
 	err :=  json.Unmarshal([]byte(response), &nationalCovidResultStruct)
 	
