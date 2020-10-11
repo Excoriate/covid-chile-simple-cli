@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cli/v2/cmd/covid"
 	"cli/v2/cmd/meta"
 	"github.com/urfave/cli" // imports as package "cli"
 	"log"
@@ -17,13 +18,17 @@ func cliInfo() {
 	app.Author = "IdeaUP.cl"
 }
 
-func loadMetaCommands(){
-	app.Commands = meta.GetCommands()
+func loadCommands() []cli.Command {
+	var commands []cli.Command
+	
+	commands = append(commands, meta.GetCommands()...)
+	commands = append(commands, covid.GetCommands()...)
+	return commands
 }
 
 func main() {
 	cliInfo()
-	loadMetaCommands()
+	app.Commands = loadCommands()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)

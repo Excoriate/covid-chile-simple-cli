@@ -1,33 +1,42 @@
 package meta
 
+/*
+ All the commands should share the same structure:
+	1. Command configuration
+	2. Command handler
+	3. Command implementation (called by the handler)
+	4. Command or subcommands documentation, using heredoc
+ */
+
 import (
-	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	"github.com/urfave/cli"
 )
 
-func versionCommandImpl (){
-	fmt.Println("Current CLI version: 1.0")
+func helloCmdHandler(c *cli.Context) {
+	helloCmdImpl()
 }
 
-func versionHereDoc() string {
+func helloCmdDoc() string {
 	return heredoc.Doc(`
-		covidcli version [command options] <key arn or alias>
+		covidcli hello
 
 		EXAMPLES:
-		   covidcli -version`)
+		   covidcli -hello`)
+}
+
+func helloCmdImpl() string {
+	return"Current CLI version: 1.0, hello motherfucker!"
 }
 
 func GetCommands() []cli.Command {
 	return  []cli.Command{
 		{
-			Name:    "version",
-			Aliases: []string{"v"},
-			UsageText: versionHereDoc(),
-			Usage:   "Check the version of the CLI",
-			Action: func(c *cli.Context) {
-				versionCommandImpl()
-			},
+			Name:      "hello",
+			Aliases:   []string{"h"},
+			UsageText: helloCmdDoc(),
+			Usage:     "Just for validate that the CLI was successfully installed :)",
+			Action:    helloCmdHandler,
 		},
 	}
 }
