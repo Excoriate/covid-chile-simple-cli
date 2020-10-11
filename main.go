@@ -18,7 +18,7 @@ func cliInfo() {
 }
 
 func loadMetaCommands(){
-	app.Commands = meta.LoadsCommands()
+	app.Commands = meta.GetCommands()
 }
 
 func main() {

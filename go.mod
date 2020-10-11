@@ -2,4 +2,7 @@ module cli/v2
 
 go 1.14
 
-require github.com/urfave/cli v1.22.4
+require (
+	github.com/MakeNowJust/heredoc v1.0.0
+	github.com/urfave/cli v1.22.4
+)
